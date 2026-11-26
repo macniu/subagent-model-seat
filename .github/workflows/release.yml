@@ -1,0 +1,104 @@
+name: Release
+
+# Pushing a version tag (v1.4.2, v1.5.0, ...) publishes a GitHub Release and
+# attaches the built package, so no one has to hand-upload binaries.
+#
+# The asset file name deliberately carries no version number: the storefront
+# links `releases/latest/download/subagent-model-seat.tgz`, and only `latest`
+# is resolved per request — the file segment is literal, so a version in the
+# name breaks that link the moment a new tag lands.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the tagged commit
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # The tag is the version people install by, so a mismatch between it and
+      # package.json has to fail here rather than ship a release whose contents
+      # disagree with its own name.
+      - name: Check that the tag matches package.json
+        run: |
+          set -eu
+          tag="${GITHUB_REF_NAME}"
+          version="$(node -p "require('./package.json').version")"
+          echo "tag=$tag version=$version"
+          if [ "v$version" != "$tag" ]; then
+            echo "::error::tag $tag does not match package.json version $version"
+            exit 1
+          fi
+
+      - name: Syntax-check both halves
+        run: |
+          set -eu
+          node --check index.js
+          node --check client.js
+          node -e "JSON.parse(require('fs').readFileSync('package.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('screenshots.json','utf8'))"
+
+      - name: Build the package and its checksum
+        run: |
+          set -eu
+          npm pack --silent
+          mv ./*.tgz subagent-model-seat.tgz
+          sha256sum subagent-model-seat.tgz > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+          tar -tzf subagent-model-seat.tgz | sort
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+          tag="${GITHUB_REF_NAME}"
+          version="${tag#v}"
+          notes="$(mktemp)"
+          cat > "$notes" <<'EOF'
+          子智能体会话的模型选择（Subagent Model Seat）`__VERSION__`。
+
+          ### 安装
+
+          ```
+          plugin_manager action=install_bundle target=github:macniu/subagent-model-seat#__TAG__
+          ```
+
+          或下载本页 Assets 里的 `subagent-model-seat.tgz`，用绝对路径安装：
+
+          ```
+          plugin_manager action=install_bundle target=/绝对路径/subagent-model-seat.tgz
+          ```
+
+          ### 校验
+
+          ```
+          shasum -a 256 subagent-model-seat.tgz
+          ```
+
+          对照同目录的 `SHA256SUMS.txt`。
+
+          ### 卸载
+
+          ```
+          plugin_manager action=remove_bundle target=@local/subagent-model-seat
+          ```
+
+          卸载后 Host 路由随插件注销、slot 注册从页面移除，原版行为完整恢复；已写入的会话模型记录属于会话数据，不受卸载影响。
+          EOF
+          sed -i "s/__TAG__/$tag/g; s/__VERSION__/$version/g" "$notes"
+          gh release create "$tag" \
+            --title "$version" \
+            --notes-file "$notes" \
+            subagent-model-seat.tgz SHA256SUMS.txt

@@ -3,9 +3,20 @@
 在子智能体会话的输入框里，像普通对话一样选择该会话使用的模型——包括原版的「模型 / 档位」两级面板，以及**按厂商或模型搜索**。DSH 原版对所有「已寻址（addressed）子智能体会话」隐藏了这个入口，Host 侧的 `session.selectModel` 也会用 `session/agent-busy: ... is owned by subagent routing` 直接拒绝。本插件把入口和写入通道都补回来，并在 **DSH 设置里新增一个独立页**，按工作区列出所有对话，可一键或逐个设置每个对话委派出去的子智能体模型。
 
 - 名称：`@local/subagent-model-seat`
-- 版本：`1.4.1`
+- 版本：`1.4.2`
 - 形态：Host 半 + Web Client 半（Host 只新增一条本地路由，无新 Remote、无插件私有持久化状态）
 - 生效范围：全部子会话（可续聊 / 一次性 / 未知模式）+ 普通会话，历史冷会话也能改
+
+## 本次新增（v1.4.2）
+
+**发版自动化**：仓库里加了 `.github/workflows/release.yml`。推一个 `v*` 标签，GitHub Actions 就会自动校验「标签版本 == package.json 版本」、语法检查两半代码、`npm pack` 打包、算 SHA256、建 Release 并把 `subagent-model-seat.tgz` 与 `SHA256SUMS.txt` 挂上去——不用再在网页上手动上传二进制。
+
+```
+git tag -a v1.4.2 -m "Subagent Model Seat 1.4.2"
+git push origin v1.4.2
+```
+
+资产文件名不带版本号（`releases/latest/download/subagent-model-seat.tgz` 只解析 `latest`，文件名是字面量），所以老链接不会随版本更新失效。
 
 ## 本次新增（v1.4.1）
 
@@ -183,6 +194,7 @@ needle 命中 `${厂商名} ${厂商 id}`  → 保留该厂商整组模型
 | `icon.svg` / `docs/preview.svg` / `docs/DETAIL.md` | 插件图标、详情页示意预览（无文字的 SVG）、详情入口。 |
 | `README.md` / `发布指南.md` | 本说明与分发安装指南（发布指南在工作区根目录）。 |
 | `tests/cleanup.cjs` | 卸载还原契约测试：验证两个 slot 与 Host 路由随 fiber.dispose 全部注销、无浏览器/磁盘持久写入、`model/selection` 无回滚代码。 |
+| `.github/workflows/release.yml` | 发版自动化：推 `v*` 标签后校验标签与 `package.json` 版本一致、语法检查、`npm pack`、算 SHA256、建 Release 并挂上 `subagent-model-seat.tgz` 与 `SHA256SUMS.txt`。 |
 
 依赖的 DSH 契约（只读源码确认，未修改宿主）：`dsh-client-ui-model-selection`（目录 / 槽契约）、`dsh-client-ui-conversation`（composer seat 槽）、`dsh-client-ui-renderer`（单槽 priority 裁决）、`dsh-client-ui-settings`（`settings.section` 契约）、`dsh-api-session-controller`（会话投影）、`dsh-api-workspace-controller`（工作区投影）、`dsh-agent`（`AgentModel.select`）、`dsh-session-persistence`（冷日志写入）、`dsh-subagent`（子会话地址与继承链）。
 
@@ -194,6 +206,7 @@ needle 命中 `${厂商名} ${厂商 id}`  → 保留该厂商整组模型
 - 过滤测试（`/tmp/testfilter.cjs`）：空 / 厂商 / 模型 / 无匹配四类查询。
 - 卸载还原契约（`tests/cleanup.cjs`）：两个 slot 注册在 fiber.dispose 后清零、Host 路由在 effect disposer 后注销、client/host 两半均无持久写入、无 `model/selection` 回滚代码——`CLEANUP CONTRACT PASSED`。
 - 视觉：用真实主题 CSS 生成浅色 / 深色预览并截图核对，深色下无白底白字，分组标题吸顶交接正常；设置页浮层在滚动容器内不再被裁剪。
+- 发版流程（`.github/workflows/release.yml`）：YAML 结构校验通过；标签与版本号一致性检查、`package.json`/`screenshots.json` 解析、`node --check` 两半代码、`npm pack` 与校验和生成都在流水线里跑，任一失败即不出 Release。
 
 ## 已知边界
 
@@ -214,7 +227,7 @@ plugin_manager action=install_bundle \
   target=github:macniu/subagent-model-seat
 ```
 
-想钉住版本就加 `#` 后缀：`github:macniu/subagent-model-seat#v1.4.1`（tag）或 `#<40位commit>`（`git rev-parse HEAD` 的输出）。也可以把 `github:` 换成 `git+https://…` 用于 GitLab/自建 Git。
+想钉住版本就加 `#` 后缀：`github:macniu/subagent-model-seat#v1.4.2`（tag）或 `#<40位commit>`（`git rev-parse HEAD` 的输出）。也可以把 `github:` 换成 `git+https://…` 用于 GitLab/自建 Git。
 
 安装服务支持的形式见 `@deepseek-ai/dsh-plugin-manager/src/install-spec.ts`：registry 包名、**绝对**本地目录、git 地址（含 `#path:` 子目录）、tarball 直链。相对路径会被拒（`a local path must be absolute`）。
 
@@ -222,7 +235,7 @@ plugin_manager action=install_bundle \
 
 ```
 plugin_manager action=remove_bundle  target=@local/subagent-model-seat
-plugin_manager action=install_bundle target=github:macniu/subagent-model-seat#v1.4.1
+plugin_manager action=install_bundle target=github:macniu/subagent-model-seat#v1.4.2
 ```
 
 ### 从 Release 的 tgz 安装（仓库装不了时的备选）
