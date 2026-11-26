@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" width="640" height="300" fill="none">
+  <rect width="640" height="300" rx="18" fill="#F5F7FB"/>
+  <rect x="24" y="24" width="592" height="252" rx="14" fill="#FFFFFF" stroke="#DCE3EF" stroke-width="1.5"/>
+
+  <!-- conversation title row -->
+  <circle cx="48" cy="48" r="7" fill="#8FA5C8"/>
+  <rect x="63" y="43" width="132" height="9" rx="4.5" fill="#8FA5C8" opacity="0.7"/>
+
+  <!-- transcript lines -->
+  <rect x="48" y="76" width="300" height="12" rx="6" fill="#DCE3EF"/>
+  <rect x="48" y="96" width="230" height="12" rx="6" fill="#DCE3EF" opacity="0.75"/>
+
+  <!-- composer card -->
+  <rect x="40" y="132" width="560" height="128" rx="12" fill="#FFFFFF" stroke="#E4EAF4" stroke-width="1.5"/>
+  <rect x="60" y="150" width="150" height="10" rx="5" fill="#E9EEF6"/>
+
+  <!-- composer control row: left chips -->
+  <circle cx="72" cy="222" r="12" stroke="#D5DEEC" stroke-width="1.5"/>
+  <path d="M72 217v10M67 222h10" stroke="#9FB0C9" stroke-width="1.5" stroke-linecap="round"/>
+  <rect x="96" y="214" width="66" height="16" rx="8" stroke="#D5DEEC" stroke-width="1.5"/>
+  <rect x="106" y="219" width="46" height="6" rx="3" fill="#C3CFE0"/>
+  <rect x="176" y="219" width="44" height="6" rx="3" fill="#C3CFE0" opacity="0.8"/>
+
+  <!-- open dropdown: root pane is two cells (Model / Effort), then the model list -->
+  <rect x="326" y="34" width="242" height="182" rx="12" fill="#FFFFFF" stroke="#E4EAF4" stroke-width="1.5"/>
+
+  <!-- cell 1: Model -> current model + chevron -->
+  <rect x="334" y="42" width="226" height="34" rx="8" fill="#F4F7FC"/>
+  <rect x="342" y="55" width="30" height="7" rx="3.5" fill="#B9C6DA"/>
+  <rect x="430" y="55" width="86" height="7" rx="3.5" fill="#8FA5C8"/>
+  <path d="M544 55l4 4 4-4" stroke="#9FB0C9" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-90 548 59)"/>
+
+  <!-- cell 2: Effort -> current level + chevron -->
+  <rect x="334" y="80" width="226" height="34" rx="8"/>
+  <rect x="342" y="93" width="26" height="7" rx="3.5" fill="#B9C6DA"/>
+  <rect x="492" y="93" width="24" height="7" rx="3.5" fill="#8FA5C8"/>
+  <path d="M544 93l4 4 4-4" stroke="#9FB0C9" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-90 548 97)"/>
+
+  <!-- separator before the grouped model list -->
+  <rect x="342" y="122" width="210" height="1" fill="#EAEFF6"/>
+
+  <!-- group heading 1 -->
+  <rect x="342" y="130" width="70" height="5" rx="2.5" fill="#C3CFE0"/>
+  <rect x="342" y="144" width="126" height="7" rx="3.5" fill="#B9C6DA"/>
+  <path d="M540 145l3.5 3.5 6-6.5" stroke="#5B8DEF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="342" y="162" width="104" height="7" rx="3.5" fill="#DCE3EF"/>
+
+  <!-- group heading 2 -->
+  <rect x="342" y="180" width="48" height="5" rx="2.5" fill="#C3CFE0"/>
+  <rect x="342" y="194" width="140" height="7" rx="3.5" fill="#DCE3EF" opacity="0.85"/>
+
+  <!-- trigger chip showing "model · effort" -->
+  <rect x="324" y="222" width="226" height="28" rx="6" fill="#EDF3FF"/>
+  <rect x="334" y="233" width="112" height="7" rx="3.5" fill="#5B8DEF" opacity="0.75"/>
+  <rect x="452" y="234" width="30" height="5" rx="2.5" fill="#8FA5C8"/>
+  <path d="M496 235l4 4 4-4" stroke="#5B8DEF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- send button -->
+  <circle cx="576" cy="236" r="14" fill="#5B8DEF"/>
+  <path d="M576 230v12M571 237l5 5 5-5" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

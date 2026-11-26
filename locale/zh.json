@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "子会话模型切换",
+    "description": "在子智能体会话的输入框中像普通对话一样选择模型与推理档位",
+    "detail": "docs/DETAIL.md"
+  }
+}

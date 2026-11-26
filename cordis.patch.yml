@@ -1,0 +1,3 @@
+- insert:
+    - id: subagent-model-seat
+      name: '@local/subagent-model-seat'

@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Subagent Model Seat",
+    "description": "Choose a subagent conversation's model and reasoning effort from the composer, just like a normal chat",
+    "detail": "docs/DETAIL.md"
+  }
+}

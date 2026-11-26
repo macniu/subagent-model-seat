@@ -1,0 +1,13 @@
+# Dependencies and build output never belong in a plugin repository.
+node_modules/
+pnpm-lock.yaml
+
+# macOS and editor noise.
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Local packaging leftovers.
+*.tgz
+dist/
