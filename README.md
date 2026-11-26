@@ -205,21 +205,43 @@ needle 命中 `${厂商名} ${厂商 id}`  → 保留该厂商整组模型
 
 ## 安装 / 卸载
 
-### 从 GitHub 安装
+### 从 GitHub 安装（推荐）
+
+仓库地址：<https://github.com/macniu/subagent-model-seat>
 
 ```
 plugin_manager action=install_bundle \
-  target=github:YOURNAME/subagent-model-seat#<40位commit>
+  target=github:macniu/subagent-model-seat
 ```
 
-把 `YOURNAME` 换成仓库所有者、`<40位commit>` 换成 `git rev-parse HEAD` 的输出。也可以用 tag：`github:YOURNAME/subagent-model-seat#v1.4.0`，或 GitLab/自建 Git 的 `git+https://…` 地址。安装服务支持的形式见 `@deepseek-ai/dsh-plugin-manager/src/install-spec.ts`：registry 包名、绝对本地目录、git 地址（含 `#path:` 子目录）、tarball 直链。
+想钉住版本就加 `#` 后缀：`github:macniu/subagent-model-seat#v1.4.1`（tag）或 `#<40位commit>`（`git rev-parse HEAD` 的输出）。也可以把 `github:` 换成 `git+https://…` 用于 GitLab/自建 Git。
 
-升级需先卸后装（同包名重复安装会返回 `already-installed`）：
+安装服务支持的形式见 `@deepseek-ai/dsh-plugin-manager/src/install-spec.ts`：registry 包名、**绝对**本地目录、git 地址（含 `#path:` 子目录）、tarball 直链。相对路径会被拒（`a local path must be absolute`）。
+
+升级需先卸后装（同包名重复安装会返回 `already-installed`，`link:` 换成 git 会命中 `package-moved`）：
 
 ```
-plugin_manager action=remove_bundle  target=YOUR_PACKAGE_NAME
-plugin_manager action=install_bundle target=github:YOURNAME/subagent-model-seat#<新commit>
+plugin_manager action=remove_bundle  target=@local/subagent-model-seat
+plugin_manager action=install_bundle target=github:macniu/subagent-model-seat#v1.4.1
 ```
+
+### 从 Release 的 tgz 安装（仓库装不了时的备选）
+
+每个 Release 都附带一个预构建的 `subagent-model-seat.tgz`（文件名不带版本号，这样 `releases/latest/download/` 的链接不会随下次发版失效）：
+
+```
+# ① 下载
+curl -L -o /tmp/subagent-model-seat.tgz \
+  https://github.com/macniu/subagent-model-seat/releases/latest/download/subagent-model-seat.tgz
+
+# ② 校验（可选，对照同目录的 SHA256SUMS.txt）
+shasum -a 256 /tmp/subagent-model-seat.tgz
+
+# ③ 安装（必须是绝对路径）
+plugin_manager action=install_bundle target=/tmp/subagent-model-seat.tgz
+```
+
+> ⚠️ 实测差异：`plugin_manager install_bundle` 指向 tgz 时走的是 profile 的 `dsh.bundle.patch` 正规入口，会写 `cordis.patch.yml` 并在页面上生效；而 `dsh plugin --profile <name> add <tgz>` 只改 `package.json` 依赖、**不会**插入 patch 条目，插件不会自动启用。要让插件出现，用前者。
 
 ### 从本地目录安装
 
